@@ -5,6 +5,19 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
+import json
+from flask import Response
+
+@app.route('/api/return_headers')
+def return_headers(methods=['GET']):
+    headers = request.headers
+    # print("hsq", headers)
+    # app.logger.info('hsq', headers)
+    # return make_succ_response(0)
+    # data = json.dumps({k:v for k, v in headers.iteritems()})
+    data = json.dumps({k:v for k, v in request.headers.items()})
+    return Response(data, mimetype='application/json')
+
 
 @app.route('/')
 def index():
