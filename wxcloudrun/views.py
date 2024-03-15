@@ -10,6 +10,15 @@ import json
 from flask import Response
 
 
+@app.route('/', methods=['POST'])
+def im_callback():
+    """
+    :return:
+    """
+    app.logger.info("get POST request /")
+    return make_succ_response(0)
+
+
 @app.route('/api/gen_sig')
 def gen_sig(methods=['GET']):
     app.logger.info("get request /api/gen_sig")
