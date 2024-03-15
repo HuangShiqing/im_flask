@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 import config
+import logging
 
 # 因MySQLDB不支持Python3，使用pymysql扩展库代替MySQLDB库
 pymysql.install_as_MySQLdb()
@@ -22,3 +23,11 @@ from wxcloudrun import views
 
 # 加载配置
 app.config.from_object('config')
+
+# log
+handler = logging.FileHandler('flask.log', encoding='UTF-8')
+handler.setLevel(logging.DEBUG)
+logging_format = logging.Formatter(
+    '%(asctime)s %(levelname)s [%(filename)s:%(lineno)s] %(message)s')
+handler.setFormatter(logging_format)
+app.logger.addHandler(handler)

@@ -12,6 +12,7 @@ from flask import Response
 
 @app.route('/api/gen_sig')
 def gen_sig(methods=['GET']):
+    app.logger.info("get request /api/gen_sig")
     openid = request.headers["X-Wx-Openid"]
     # 在即时通信 IM 控制台-【应用管理】获取 SDKAPPID、SECRETKEY
     sdkappid = 1600026361
@@ -24,6 +25,7 @@ def gen_sig(methods=['GET']):
 
 @app.route('/api/return_headers')
 def return_headers(methods=['GET']):
+    app.logger.info("get request /api/return_headers")
     headers = request.headers
     # print("hsq", headers)
     # app.logger.info('hsq', headers)
@@ -38,6 +40,7 @@ def index():
     """
     :return: 返回index页面
     """
+    app.logger.info("get request /")
     return render_template('index.html')
 
 
@@ -48,6 +51,7 @@ def count():
     """
 
     # 获取请求体参数
+    app.logger.info("get POST request /api/count")
     params = request.get_json()
 
     # 检查action参数
@@ -89,5 +93,6 @@ def get_count():
     """
     :return: 计数的值
     """
+    app.logger.info("get request /api/count")
     counter = Counters.query.filter(Counters.id == 1).first()
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
