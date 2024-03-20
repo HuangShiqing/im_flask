@@ -5,7 +5,7 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 from wxcloudrun.TLSSigAPIv2 import TLSSigAPIv2
-from wxcloudrun.rest_im import account_check, api
+from wxcloudrun.rest_im import account_check, friend_import, api
 
 import json
 from flask import Response
@@ -27,10 +27,15 @@ def gen_sig(methods=['GET']):
 
     r = account_check(openid)
     status = r["ResultItem"][0]["AccountStatus"]
-    if status == "Imported":
-        app.logger.info("openid {} imported".format(openid))
+    if status != "Imported":
+        app.logger.info("openid {} not imported yet".format(openid))
+        rbt = "@RBT#001"
+        r = friend_import(rbt, openid)
+        if r["ResultItem"][0]["ResultCode"] != 0:
+            pass
+        app.logger.info("openid {} imported now".format(openid))
     else:
-        app.logger.info("openid {} not imported".format(openid))
+        app.logger.info("openid {} imported".format(openid))
 
     # 在即时通信 IM 控制台-【应用管理】获取 SDKAPPID、SECRETKEY
     # sdkappid = 1600026361

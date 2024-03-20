@@ -9,10 +9,32 @@ administrator_sig = api.genUserSig(administrator_userid)
 
 
 def account_check(userid):
-    url = "https://console.tim.qq.com/v4/im_open_login_svc/account_check?sdkappid={}&identifier={}&usersig={}&random=99999999&contenttype=json".format(sdkappid, administrator_userid, administrator_sig)
-    data = json.dumps({"CheckItem":[{"UserID":userid}]})
-    r = requests.post(url, data)
+    cmd = "im_open_login_svc/account_check"
+    url = "https://console.tim.qq.com/v4/{}?sdkappid={}&identifier={}&usersig={}&random=99999999&contenttype=json".format(cmd, sdkappid, administrator_userid, administrator_sig)
+    data = {
+        "CheckItem": [
+            {
+                "UserID":userid
+            }
+        ]
+    }
+    r = requests.post(url, json.dumps(data))
     # print(r.text)
+    return r.json()
+
+
+# add to_account as from_account's new friend
+def friend_import(from_account, to_account):
+    cmd = "sns/friend_import"
+    url = "https://console.tim.qq.com/v4/{}?sdkappid={}&identifier={}&usersig={}&random=99999999&contenttype=json".format(cmd, sdkappid, administrator_userid, administrator_sig)
+    data = {
+        "From_Account": from_account,
+        "AddFriendItem": {
+            "To_Account": to_account,
+            "AddSource": "AddSource_Type_Robot"
+        }
+    }
+    r = requests.post(url, json.dumps(data))
     return r.json()
 
 if __name__ == '__main__':
