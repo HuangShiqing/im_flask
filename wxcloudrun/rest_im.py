@@ -23,6 +23,16 @@ def account_check(userid):
     return r.json()
 
 
+def account_import(account):
+    cmd = "im_open_login_svc/account_import"
+    url = "https://console.tim.qq.com/v4/{}?sdkappid={}&identifier={}&usersig={}&random=99999999&contenttype=json".format(cmd, sdkappid, administrator_userid, administrator_sig)
+    data = {
+        "UserID": account
+    }
+    r = requests.post(url, json.dumps(data))
+    return r.json()
+
+
 # add to_account as from_account's new friend
 def friend_import(from_account, to_account):
     cmd = "sns/friend_import"

@@ -5,7 +5,7 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 from wxcloudrun.TLSSigAPIv2 import TLSSigAPIv2
-from wxcloudrun.rest_im import account_check, friend_import, api
+from wxcloudrun.rest_im import account_check, account_import, friend_import, api
 
 import json
 from flask import Response
@@ -29,11 +29,18 @@ def gen_sig(methods=['GET']):
     status = r["ResultItem"][0]["AccountStatus"]
     if status != "Imported":
         app.logger.info("openid {} not imported yet".format(openid))
+        # 导入用户
+        r = account_import(openid)
+        if r["ActionStatus"] != "OK":
+            pass
+        app.logger.info("openid {} imported now".format(openid))
+
+        # 导入好友
         rbt = "@RBT#001"
         r = friend_import(rbt, openid)
         if r["ResultItem"][0]["ResultCode"] != 0:
             pass
-        app.logger.info("openid {} imported now".format(openid))
+        app.logger.info("{} is {}'s friend now".format(rbt, openid))
     else:
         app.logger.info("openid {} imported".format(openid))
 
