@@ -5,6 +5,7 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 from wxcloudrun.TLSSigAPIv2 import TLSSigAPIv2
+from wxcloudrun.rest_im import account_check, api
 
 import json
 from flask import Response
@@ -23,10 +24,18 @@ def im_callback():
 def gen_sig(methods=['GET']):
     app.logger.info("get request /api/gen_sig")
     openid = request.headers["X-Wx-Openid"]
+
+    r = account_check(openid)
+    status = r["ResultItem"][0]["AccountStatus"]
+    if status == "Imported":
+        app.logger.info("openid {} imported".format(openid))
+    else:
+        app.logger.info("openid {} not imported".format(openid))
+
     # 在即时通信 IM 控制台-【应用管理】获取 SDKAPPID、SECRETKEY
-    sdkappid = 1600026361
-    secretkey = "5158dd13465291a6db55bbf053803c185a3b805c35b31e2539f3d9a2ff7f98f8"
-    api = TLSSigAPIv2(sdkappid, secretkey)
+    # sdkappid = 1600026361
+    # secretkey = "5158dd13465291a6db55bbf053803c185a3b805c35b31e2539f3d9a2ff7f98f8"
+    # api = TLSSigAPIv2(sdkappid, secretkey)
     sig = api.genUserSig(openid)
     data = json.dumps({"X-Wx-Openid":request.headers["X-Wx-Openid"], "sig":sig})
     return Response(data, mimetype='application/json')
