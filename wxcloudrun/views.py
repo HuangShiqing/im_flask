@@ -37,7 +37,7 @@ def gen_sig(methods=['GET']):
 
         # 导入好友
         rbt = "@RBT#001"
-        r = friend_import(rbt, openid)
+        r = friend_import(openid, rbt)
         if r["ResultItem"][0]["ResultCode"] != 0:
             pass
         app.logger.info("{} is {}'s friend now".format(rbt, openid))

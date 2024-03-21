@@ -39,10 +39,12 @@ def friend_import(from_account, to_account):
     url = "https://console.tim.qq.com/v4/{}?sdkappid={}&identifier={}&usersig={}&random=99999999&contenttype=json".format(cmd, sdkappid, administrator_userid, administrator_sig)
     data = {
         "From_Account": from_account,
-        "AddFriendItem": {
-            "To_Account": to_account,
-            "AddSource": "AddSource_Type_Robot"
-        }
+        "AddFriendItem": [
+            {
+                "To_Account": to_account,
+                "AddSource": "AddSource_Type_Robot"
+            }
+        ]
     }
     r = requests.post(url, json.dumps(data))
     return r.json()
