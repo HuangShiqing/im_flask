@@ -49,5 +49,27 @@ def friend_import(from_account, to_account):
     r = requests.post(url, json.dumps(data))
     return r.json()
 
-if __name__ == '__main__':
-    account_check("hsqyc")
+
+def send_txt(send_account, recv_account, text):
+    cmd = "openim/sendmsg"
+    url = "https://console.tim.qq.com/v4/{}?sdkappid={}&identifier={}&usersig={}&random=99999999&contenttype=json".format(cmd, sdkappid, administrator_userid, administrator_sig)
+    data = {
+        "SyncOtherMachine": 2,
+        "From_Account": send_account,
+        "To_Account": recv_account,
+        "MsgRandom": 1287657,
+        "ForbidCallbackControl":[
+            "ForbidBeforeSendMsgCallback",
+            "ForbidAfterSendMsgCallback"],
+        "MsgBody": [
+            {
+                "MsgType": "TIMTextElem",
+                "MsgContent": {
+                    "Text": text
+                }
+            }
+        ],
+    }
+    r = requests.post(url, json.dumps(data))
+    return r.json()
+

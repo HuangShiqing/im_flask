@@ -5,7 +5,7 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 from wxcloudrun.TLSSigAPIv2 import TLSSigAPIv2
-from wxcloudrun.rest_im import account_check, account_import, friend_import, api
+from wxcloudrun.rest_im import account_check, account_import, friend_import, send_txt, api
 
 import json
 from flask import Response
@@ -23,6 +23,7 @@ def im_callback():
 @app.route('/api/gen_sig')
 def gen_sig(methods=['GET']):
     app.logger.info("get request /api/gen_sig")
+    rbt = "@RBT#001"
     openid = request.headers["X-Wx-Openid"]
 
     r = account_check(openid)
@@ -36,7 +37,6 @@ def gen_sig(methods=['GET']):
         app.logger.info("openid {} imported now".format(openid))
 
         # 导入好友
-        rbt = "@RBT#001"
         r = friend_import(openid, rbt)
         if r["ResultItem"][0]["ResultCode"] != 0:
             pass
@@ -44,6 +44,17 @@ def gen_sig(methods=['GET']):
     else:
         app.logger.info("openid {} imported".format(openid))
 
+    try_count = 0
+    while True:
+        r = send_txt(rbt, openid, "hi")
+        if r["ActionStatus"] != "OK":
+            app.logger.info("{} send msg to {} not ok".format(rbt, openid))
+        else:
+            app.logger.info("{} send msg to {} ok".format(rbt, openid))
+            break
+        try_count += 1
+        if try_count >= 5:
+            break
     # 在即时通信 IM 控制台-【应用管理】获取 SDKAPPID、SECRETKEY
     # sdkappid = 1600026361
     # secretkey = "5158dd13465291a6db55bbf053803c185a3b805c35b31e2539f3d9a2ff7f98f8"
