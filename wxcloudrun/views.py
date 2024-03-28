@@ -17,6 +17,22 @@ def im_callback():
     :return:
     """
     app.logger.info("get POST request /")
+    data = request.get_json()
+    rbt = "@RBT#001"
+    openid = data["From_Account"]
+    CallbackCommand = data["CallbackCommand"]
+
+    if CallbackCommand == "C2C.CallbackAfterSendMsg":
+        # 文字, 称呼
+        if data["MsgBody"][0]["MsgType"] == "TIMTextElem":
+            name = data["MsgBody"][0]["MsgContent"]["Text"]
+            r = send_txt(rbt, openid, "收到称呼: {}".format(name))
+            # app.logger.info("get name: {}".format(name))
+        # 视频, 声音
+        elif data["MsgBody"][0]["MsgType"] == "TIMVideoFileElem":
+            url = data["MsgBody"][0]["MsgContent"]["VideoUrl"]
+            r = send_txt(rbt, openid, "收到视频url: {}".format(url))
+            # app.logger.info("get url: {}".format(url))
     return make_succ_response(0)
 
 
@@ -46,7 +62,7 @@ def gen_sig(methods=['GET']):
 
     try_count = 0
     while True:
-        r = send_txt(rbt, openid, "hi")
+        r = send_txt(rbt, openid, "你好新朋友, 请分别发送称呼和声音给我")
         if r["ActionStatus"] != "OK":
             app.logger.info("{} send msg to {} not ok".format(rbt, openid))
         else:
